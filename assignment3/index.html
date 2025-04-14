@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Form</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        input.invalid {
+            border-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Registration</h1>
+        <form id="registrationForm" novalidate>
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" required>
+                <div id="fullNameError" class="error">Please enter your full name</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email address" required>
+                <div id="emailError" class="error">Please enter a valid email address</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="dateOfBirth">Date of Birth</label>
+                <input type="date" id="dateOfBirth" required>
+                <div id="dobError" class="error">You must be at least 16 years old to register</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a password" required>
+                <div id="passwordError" class="error">Password must be at least 8 characters and include uppercase, lowercase, number and special character</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                <div id="confirmPasswordError" class="error">Passwords do not match</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="studentId">Student ID (Optional)</label>
+                <input type="text" id="studentId" placeholder="Enter student ID if you have one">
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Department</label>
+                <input type="text" id="department" placeholder="Enter your department" required>
+                <div id="departmentError" class="error">Please enter your department</div>
+            </div>
+            
+            <button type="submit">Register</button>
+            
+            <div id="successMessage" class="success-message">
+                Registration successful! Welcome to our student portal.
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registrationForm');
+            
+            // Form elements
+            const fullName = document.getElementById('fullName');
+            const email = document.getElementById('email');
+            const dateOfBirth = document.getElementById('dateOfBirth');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const department = document.getElementById('department');
+            
+            // Error elements
+            const fullNameError = document.getElementById('fullNameError');
+            const emailError = document.getElementById('emailError');
+            const dobError = document.getElementById('dobError');
+            const passwordError = document.getElementById('passwordError');
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            const departmentError = document.getElementById('departmentError');
+            
+            // Success message
+            const successMessage = document.getElementById('successMessage');
+            
+            // Add submit event listener to the form
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Reset previous errors
+                resetErrors();
+                
+                // Validate inputs
+                let isValid = true;
+                
+                // Validate name
+                if (!fullName.value.trim()) {
+                    showError(fullName, fullNameError);
+                    isValid = false;
+                }
+                
+                // Validate email
+                if (!validateEmail(email.value)) {
+                    showError(email, emailError);
+                    isValid = false;
+                }
+                
+                // Validate date of birth
+                if (!dateOfBirth.value) {
+                    showError(dateOfBirth, dobError, "Date of birth is required");
+                    isValid = false;
+                } else if (!validateAge(dateOfBirth.value)) {
+                    showError(dateOfBirth, dobError);
+                    isValid = false;
+                }
+                
+                // Validate password
+                if (!validatePassword(password.value)) {
+                    showError(password, passwordError);
+                    isValid = false;
+                }
+                
+                // Validate confirm password
+                if (password.value !== confirmPassword.value) {
+                    showError(confirmPassword, confirmPasswordError);
+                    isValid = false;
+                }
+                
+                // Validate department
+                if (!department.value.trim()) {
+                    showError(department, departmentError);
+                    isValid = false;
+                }
+                
+                // If all validations pass
+                if (isValid) {
+                    // In a real application, you would submit the form to the server here
+                    // For demonstration purposes, we'll just show a success message
+                    successMessage.style.display = 'block';
+                    form.reset();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                }
+            });
+            
+            // Input event listeners for real-time validation
+            email.addEventListener('input', function() {
+                if (validateEmail(email.value)) {
+                    hideError(email, emailError);
+                }
+            });
+            
+            dateOfBirth.addEventListener('input', function() {
+                if (validateAge(dateOfBirth.value)) {
+                    hideError(dateOfBirth, dobError);
+                }
+            });
+            
+            password.addEventListener('input', function() {
+                if (validatePassword(password.value)) {
+                    hideError(password, passwordError);
+                }
+                
+                // Check confirm password match on password change
+                if (confirmPassword.value && password.value === confirmPassword.value) {
+                    hideError(confirmPassword, confirmPasswordError);
+                }
+            });
+            
+            confirmPassword.addEventListener('input', function() {
+                if (password.value === confirmPassword.value) {
+                    hideError(confirmPassword, confirmPasswordError);
+                }
+            });
+            
+            // Validation functions
+            function validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
+            function validateAge(dob) {
+                const birthDate = new Date(dob);
+                const today = new Date();
+                
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDifference = today.getMonth() - birthDate.getMonth();
+                
+                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                
+                return age >= 16; // Must be at least 16 years old
+            }
+            
+            function validatePassword(password) {
+                // Password must be at least 8 characters
+                // Must contain at least one uppercase letter, one lowercase letter,
+                // one number, and one special character
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                return passwordRegex.test(password);
+            }
+            
+            // Helper functions
+            function showError(inputElement, errorElement, customMessage) {
+                inputElement.classList.add('invalid');
+                errorElement.style.display = 'block';
+                if (customMessage) {
+                    errorElement.textContent = customMessage;
+                }
+            }
+            
+            function hideError(inputElement, errorElement) {
+                inputElement.classList.remove('invalid');
+                errorElement.style.display = 'none';
+            }
+            
+            function resetErrors() {
+                // Remove all error messages
+                const errorElements = document.querySelectorAll('.error');
+                const inputElements = document.querySelectorAll('input');
+                
+                errorElements.forEach(element => {
+                    element.style.display = 'none';
+                });
+                
+                inputElements.forEach(element => {
+                    element.classList.remove('invalid');
+                });
+                
+                successMessage.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
