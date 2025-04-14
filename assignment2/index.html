@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delicious Recipes</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f7f7f7;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .search-container {
+            display: flex;
+            margin: 20px 0;
+        }
+
+        #searchInput {
+            padding: 10px;
+            width: 300px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+
+        #searchButton {
+            padding: 10px 15px;
+            background-color: #4ecdc4;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #searchButton:hover {
+            background-color: #3dbdb4;
+        }
+
+        /* Main Content Styles */
+        main {
+            padding: 40px 0;
+        }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .recipe-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe-image {
+            height: 200px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 18px;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .recipe-info {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .recipe-info span {
+            margin-right: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .recipe-description {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .recipe-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .tag {
+            background-color: #eee;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .view-recipe {
+            display: inline-block;
+            margin-top: 15px;
+            background-color: #4ecdc4;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .view-recipe:hover {
+            background-color: #3dbdb4;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-section a {
+            color: #bbb;
+            text-decoration: none;
+        }
+
+        .footer-section a:hover {
+            color: #fff;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #bbb;
+        }
+
+        /* Hide recipes when filtered out */
+        .hidden {
+            display: none;
+        }
+        
+        /* No results message */
+        #noResults {
+            display: none;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Delicious Recipes</div>
+            </nav>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search recipes...">
+                <button id="searchButton">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Our Recipe Collection</h1>
+        <p>Discover delicious recipes for every occasion. Use the search box to find specific recipes.</p>
+        
+        <div id="noResults">No recipes found matching your search.</div>
+        
+        <div class="recipe-grid" id="recipeGrid">
+            <!-- Recipe 1 -->
+            <div class="recipe-card" data-tags="italian pasta vegetarian">
+                <div class="recipe-image">Classic Spaghetti Carbonara</div>
+                <div class="recipe-content">
+                    <h2 class="recipe-title">Classic Spaghetti Carbonara</h2>
+                    <div class="recipe-info">
+                        <span>⏰ 25 mins</span>
+                        <span>👨‍🍳 Easy</span>
+                    </div>
+                    <p class="recipe-description">A creamy Italian pasta dish with eggs, cheese, pancetta, and black pepper.</p>
+                    <div class="recipe-tags">
+                        <span class="tag">Italian</span>
+                        <span class="tag">Pasta</span>
+                        <span class="tag">Quick</span>
+                    </div>
+                    <a href="#" class="view-recipe">View Recipe</a>
+                </div>
+            </div>
+
+            <!-- Recipe 2 -->
+            <div class="recipe-card" data-tags="american dessert baking">
+                <div class="recipe-image">Chocolate Chip Cookies</div>
+                <div class="recipe-content">
+                    <h2 class="recipe-title">Chocolate Chip Cookies</h2>
+                    <div class="recipe-info">
+                        <span>⏰ 30 mins</span>
+                        <span>👨‍🍳 Easy</span>
+                    </div>
+                    <p class="recipe-description">Classic chocolate chip cookies with a soft center and crispy edges.</p>
+                    <div class="recipe-tags">
+                        <span class="tag">Dessert</span>
+                        <span class="tag">Baking</span>
+                        <span class="tag">American</span>
+                    </div>
+                    <a href="#" class="view-recipe">View Recipe</a>
+                </div>
+            </div>
+
+            <!-- Recipe 3 -->
+            <div class="recipe-card" data-tags="mexican spicy dinner">
+                <div class="recipe-image">Chicken Enchiladas</div>
+                <div class="recipe-content">
+                    <h2 class="recipe-title">Chicken Enchiladas</h2>
+                    <div class="recipe-info">
+                        <span>⏰ 45 mins</span>
+                        <span>👨‍🍳 Medium</span>
+                    </div>
+                    <p class="recipe-description">Flavorful Mexican enchiladas filled with seasoned chicken and cheese.</p>
+                    <div class="recipe-tags">
+                        <span class="tag">Mexican</span>
+                        <span class="tag">Dinner</span>
+                        <span class="tag">Spicy</span>
+                    </div>
+                    <a href="#" class="view-recipe">View Recipe</a>
+                </div>
+            </div>
+
+            <!-- Recipe 4 -->
+            <div class="recipe-card" data-tags="asian vegetarian healthy">
+                <div class="recipe-image">Vegetable Stir Fry</div>
+                <div class="recipe-content">
+                    <h2 class="recipe-title">Vegetable Stir Fry</h2>
+                    <div class="recipe-info">
+                        <span>⏰ 20 mins</span>
+                        <span>👨‍🍳 Easy</span>
+                    </div>
+                    <p class="recipe-description">A quick and healthy stir fry loaded with colorful vegetables.</p>
+                    <div class="recipe-tags">
+                        <span class="tag">Asian</span>
+                        <span class="tag">Vegetarian</span>
+                        <span class="tag">Healthy</span>
+                    </div>
+                    <a href="#" class="view-recipe">View Recipe</a>
+                </div>
+            </div>
+
+            <!-- Recipe 5 -->
+            <div class="recipe-card" data-tags="breakfast healthy quick">
+                <div class="recipe-image">Avocado Toast</div>
+                <div class="recipe-content">
+                    <h2 class="recipe-title">Avocado Toast</h2>
+                    <div class="recipe-info">
+                        <span>⏰ 10 mins</span>
+                        <span>👨‍🍳 Easy</span>
+                    </div>
+                    <p class="recipe-description">Simple and nutritious breakfast toast topped with mashed avocado.</p>
+                    <div class="recipe-tags">
+                        <span class="tag">Breakfast</span>
+                        <span class="tag">Healthy</span>
+                        <span class="tag">Quick</span>
+                    </div>
+                    <a href="#" class="view-recipe">View Recipe</a>
+                </div>
+            </div>
+
+            <!-- Recipe 6 -->
+            <div class="recipe-card" data-tags="italian dinner comfort">
+                <div class="recipe-image">Homemade Lasagna</div>
+                <div class="recipe-content">
+                    <h2 class="recipe-title">Homemade Lasagna</h2>
+                    <div class="recipe-info">
+                        <span>⏰ 90 mins</span>
+                        <span>👨‍🍳 Advanced</span>
+                    </div>
+                    <p class="recipe-description">Classic Italian lasagna with layers of pasta, meat sauce, and cheese.</p>
+                    <div class="recipe-tags">
+                        <span class="tag">Italian</span>
+                        <span class="tag">Dinner</span>
+                        <span class="tag">Comfort Food</span>
+                    </div>
+                    <a href="#" class="view-recipe">View Recipe</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><a href="#">Breakfast</a></li>
+                        <li><a href="#">Lunch</a></li>
+                        <li><a href="#">Dinner</a></li>
+                        <li><a href="#">Desserts</a></li>
+                        <li><a href="#">Vegetarian</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <ul>
+                        <li><a href="#">Our Story</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Testimonials</a></li>
+                        <li><a href="#">Submit a Recipe</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Help & Support</h3>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Delicious Recipes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Get elements
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const recipeCards = document.querySelectorAll('.recipe-card');
+        const noResults = document.getElementById('noResults');
+        
+        // Search function
+        function searchRecipes() {
+            const searchTerm = searchInput.value.toLowerCase();
+            let resultsFound = false;
+            
+            recipeCards.forEach(card => {
+                const title = card.querySelector('.recipe-title').textContent.toLowerCase();
+                const description = card.querySelector('.recipe-description').textContent.toLowerCase();
+                const tags = card.getAttribute('data-tags').toLowerCase();
+                
+                if (title.includes(searchTerm) || 
+                    description.includes(searchTerm) || 
+                    tags.includes(searchTerm)) {
+                    card.classList.remove('hidden');
+                    resultsFound = true;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            
+            // Show/hide no results message
+            if (resultsFound) {
+                noResults.style.display = 'none';
+            } else {
+                noResults.style.display = 'block';
+            }
+        }
+        
+        // Event listeners
+        searchButton.addEventListener('click', searchRecipes);
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                searchRecipes();
+            }
+        });
+    </script>
+</body>
+</html>
