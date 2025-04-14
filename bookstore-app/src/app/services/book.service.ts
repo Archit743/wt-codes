@@ -8,24 +8,24 @@ export class BookService {
   private books: Book[] = [
     {
       id: 1,
-      title: 'The Great Gatsby',
-      author: 'F. Scott Fitzgerald',
-      price: 9.99,
-      description: 'A story of wealth, love and tragedy in the Jazz Age.'
+      title: 'The Maze Runner',
+      author: 'James Dashner',
+      price: 8.99,
+      description: 'A thrilling dystopian novel about a group of teens trapped in a maze.'
     },
     {
       id: 2,
-      title: 'To Kill a Mockingbird',
-      author: 'Harper Lee',
+      title: 'White nights',
+      author: 'Fyodor Dostoevsky',
       price: 12.99,
-      description: 'A classic of modern American literature about racial inequality.'
+      description: 'A exploration of the human psyche and the nature of love.'
     },
     {
       id: 3,
-      title: '1984',
-      author: 'George Orwell',
+      title: 'Diary of a wimpy kid',
+      author: 'Jeff Kinney',
       price: 10.99,
-      description: 'A dystopian social science fiction novel.'
+      description: 'A humorous take on the life of a middle schooler, filled with illustrations.'
     }
   ];
 
